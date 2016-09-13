@@ -47,20 +47,25 @@ def home_back(browser):    #找到搜索按钮的界面
     try:browser.find_element_by_id('com.hnmall.haiwaigou:id/title_back').click()
     except NoSuchElementException,e:
         pass 
-    else:    
-        try:browser.find_element_by_id('com.hnmall.haiwaigou:id/positiveButton').click()
-        except NoSuchElementException,e:
-            pass
-        try:browser.find_element_by_id('com.hnmall.haiwaigou:id/tv_pay')
-        except NoSuchElementException,e:
-            pass
-        else:
-            browser.find_element_by_id('com.hnmall.haiwaigou:id/title_back').click()
     try:browser.find_element_by_id('com.hnmall.haiwaigou:id/detail_cannel').click()
     except NoSuchElementException,e:
         pass
     browser.implicitly_wait(5)
     try:browser.find_element_by_id('com.hnmall.haiwaigou:id/bt_go_home').click()
+    except NoSuchElementException,e:
+        pass
+    else:
+        return   
+    try:browser.find_element_by_id('com.hnmall.haiwaigou:id/positiveButton').click()
+    except NoSuchElementException,e:
+        pass
+    try:browser.find_element_by_id('com.hnmall.haiwaigou:id/tv_pay')
+    except NoSuchElementException,e:
+        pass
+    try:browser.find_element_by_id('com.hnmall.haiwaigou:id/title_back').click()
+    except NoSuchElementException,e:
+        pass        
+    try:browser.find_element_by_id('com.hnmall.haiwaigou:id/index_home').click()
     except NoSuchElementException,e:
         pass
     else:return

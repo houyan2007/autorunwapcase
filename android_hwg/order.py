@@ -89,10 +89,10 @@ class Order(object):
         if elem_discount.text==u'可用优惠券0张':
             elem_discount.click()
             elem_coupon=self.browser.find_element_by_id('com.hnmall.haiwaigou:id/tv_coupon_text')
-            if elem_coupon==u'你目前没有可用的优惠券哟~':
+            if u'没有'in elem_coupon.text:     # ==u'你目前没有可用的优惠券哟~':
+                self.browser.find_element_by_id('com.hnmall.haiwaigou:id/title_back').click()
                 return False
         else:
-            elem_discount.click()
             return True
 
     def order_coupon_change(self,num):#目前支持第1屏幕的优惠券直接的切换
@@ -103,8 +103,11 @@ class Order(object):
             return False
         if num==1:
             return True
+        self.browser.find_element_by_id('com.hnmall.haiwaigou:id/tv_discount_name').click()
         elem_bgs=self.browser.find_elements_by_id('com.hnmall.haiwaigou:id/tv_discount_plant')
         flag=0
+        if num>len(elem_bgs):
+            return False  #待切换的优惠券不在第1屏幕或者大于优惠券总数
         for elem_bg in elem_bgs:
             flag=flag+1
             if flag==num:
@@ -114,8 +117,9 @@ class Order(object):
                     return True
                 else:
                     return False                
-        if flag<num:
-            return False   #待切换的优惠券不在第1屏幕或者大于优惠券总数
+        if flag<num:   #优惠券数量小于Num
+            self.browser.find_element_by_id('com.hnmall.haiwaigou:id/title_back').click()
+            return False   
 
     def order_confirm(self):
         self.browser.find_element_by_id('com.hnmall.haiwaigou:id/commit_order_button').click()

@@ -148,15 +148,15 @@ class Cart(object):
     def goods_pay(self,goods):
         while True:
             try:
-                el_shop_car=self.browser.find_element_by_id('com.hnmall.haiwaigou:id/el_shop_car').\
+                pay_btn=self.browser.find_element_by_id('com.hnmall.haiwaigou:id/el_shop_car').\
                 find_element_by_class_name('android.widget.LinearLayout').\
                 find_element_by_class_name('android.widget.LinearLayout').\
-                find_element_by_id('com.hnmall.haiwaigou:id/ll_car_bottom')
+                find_element_by_id('com.hnmall.haiwaigou:id/ll_car_bottom').\
+                find_element_by_id('com.hnmall.haiwaigou:id/tv_pay')
             except NoSuchElementException,e:
                 element="browser.find_element_by_id('com.hnmall.haiwaigou:id/tv_pay')"
                 swipeToUp(self.browser,element,1000)
             else:
-                pay_btn=el_shop_car.find_element_by_id('com.hnmall.haiwaigou:id/tv_pay')
                 pay_pos=pay_btn.location_in_view
                 pay_y=pay_pos[u'y']
                 pay_x=pay_pos[u'x']
