@@ -18,9 +18,15 @@ class ExcelCase(object):
 			ws=wb[sheet_name]
 			if len(ws.rows)<2:
 				continue
-			for i in range(1,len(ws.rows)+1):
+			for i,row in enumerate(ws.rows):
+			#for i in range(1,len(ws.rows)+1):
+				if i==0:
+					continue
 				sheet_row=[]
-				for j in range(1,len(ws.columns)+1):
+				for j,col in enumerate(ws.columns):
+				#for j in range(1,len(ws.columns)+1):
+				    if j==0:
+				    	continue
 					cellvalue=ws.cell(row=i,column=j).value
 					if cellvalue:
 						cellvalue=str(cellvalue).strip()
