@@ -1,17 +1,18 @@
 #coding:utf-8
-from base import SHOP_URL,buy_login,scroll
+from base import BaseHWG
 from selenium.common.exceptions import NoSuchElementException,WebDriverException
 import time
 
-class Shop(object): #基于登录后
+class Shop(BaseHWG):
     def __init__(self,browser):
+        super(Shop,self).__init__(browser)
         self.browser=browser
 
     def __dir__(self):
         return ['goods_max','goods_min','goods_change','goods_buyadd']
 
     def goods_page(self,sp):
-        goods_url='%s%s.html' % (SHOP_URL,sp)
+        goods_url='%s%s.html' % (BaseHWG.SHOP_URL,sp)
         self.browser.get(goods_url)
         try:self.browser.find_element_by_id('banner')
         except NoSuchElementException,e:
@@ -58,7 +59,7 @@ class Shop(object): #基于登录后
                 return True
         if goodsbuy==True:
             self.buy_click(mb)
-            if not buy_login(self.browser):
+            if not self.buy_login():
                 return False
             if self.browser.find_element_by_class_name('title').text==u'提交订单':
                 return True
@@ -81,7 +82,7 @@ class Shop(object): #基于登录后
     def selected_show(self):
         element=self.browser.find_element_by_css_selector(
             'body > div.box > div.goods > div.goods_top > div.selectedShow.clearfix')
-        scroll(self.browser,element) 
+        self.scroll(element) 
         element.click()
 
     def goods_numvalue(self):
@@ -174,7 +175,7 @@ class Shop(object): #基于登录后
             children=parent.find_elements_by_class_name('able')
             for able in children:
                 if able.text.lower()==spec.lower():
-                    scroll(self.browser,able)
+                    self.scroll(able)
                     able.click()
                     break
         number=self.goods_numvalue()

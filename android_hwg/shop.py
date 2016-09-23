@@ -1,9 +1,10 @@
 #coding=utf-8
 from selenium.common.exceptions import NoSuchElementException,WebDriverException
-from base import buy_login,swipeToUp,home_back
+from base import BaseHWG
 
-class Shop(object):
+class Shop(BaseHWG):
     def __init__(self,browser):
+        super(Shop,self).__init__(browser)
         self.browser=browser
 
     def __dir__(self):
@@ -13,19 +14,13 @@ class Shop(object):
         if name=='':
             return False
         self.browser.implicitly_wait(30)
-        try:self.browser.find_element_by_id('com.hnmall.haiwaigou:id/detail_cannel').click()
-        except NoSuchElementException,e:
-            pass
-        self.browser.implicitly_wait(5)
-        try:self.browser.find_element_by_id('com.hnmall.haiwaigou:id/bt_go_home').click()
-        except NoSuchElementException,e:
-            home_back(self.browser)
-        else:pass
+        self.home_back(BaseHWG.PageFlag)
         self.browser.find_element_by_id('com.hnmall.haiwaigou:id/title_search').click()
         self.browser.find_element_by_id('com.hnmall.haiwaigou:id/search_edittext').send_keys(name)
         self.browser.find_element_by_id('com.hnmall.haiwaigou:id/search_cannel').click()
         try:gridview=self.browser.find_element_by_id('com.hnmall.haiwaigou:id/default_textbutton')
         except NoSuchElementException,e:
+            BaseHWG.PageFlag='searchresult'
             return False   #没有搜索到对应的商品
         else:
             self.browser.find_element_by_id('com.hnmall.haiwaigou:id/act_session_item_img').click()
@@ -34,27 +29,34 @@ class Shop(object):
                 return False  #未跳转到商品详情页
             else:
                 if title==u'商品详情':
+                    BaseHWG.PageFlag='shop'
                     return True
                 else:
                     return False
 
 
     def selected_show(self):
-        element="browser.find_element_by_id('com.hnmall.haiwaigou:id/tv_rule_name').click()"
-        swipeToUp(self.browser,element,1000)
+        element="self.browser.find_element_by_id('com.hnmall.haiwaigou:id/tv_rule_name').click()"
+        self.swipeToUp(element,1000)
+        BaseHWG.PageFlag='shopspec'
 
 
     def buy_click(self,mb):
         if mb==True:  #在规格面板点击立即购买
             self.browser.find_element_by_id('com.hnmall.haiwaigou:id/buy_now').click()
+            BaseHWG.PageFlag='spec2order'
         else:   #在商品详情页点击立即购买
-            try:self.browser.find_element_by_id('com.hnmall.haiwaigou:id/detail_cannel').click()
-            except WebDriverException,e:
-                pass
+            try:self.browser.find_element_by_id('com.hnmall.haiwaigou:id/title_back_button')
+            except NoSuchElementException,e:
+                try:self.browser.find_element_by_id('com.hnmall.hadetail_canneliwaigou:id/detail_cannel').click()
+                except WebDriverException,e:
+                    pass
             self.browser.implicitly_wait(5)
             self.browser.find_element_by_id('com.hnmall.haiwaigou:id/buy_now').click()
+            BaseHWG.PageFlag='shop2order'
 
     def add_click(self,mb):
+        BaseHWG.PageFlag='shop'
         if mb==True:  #在规格面板点击加入购物车
             self.browser.find_element_by_id('com.hnmall.haiwaigou:id/shop_dedail_addcar').click()
             try: self.browser.find_element_by_id('com.hnmall.haiwaigou:id/shop_dedail_carnum')
@@ -63,9 +65,9 @@ class Shop(object):
             else:
                 return True
         else:   #在商品详情页点击加入购物车
-            try:self.browser.find_element_by_id('com.hnmall.haiwaigou:id/bottom_layout')
+            try:self.browser.find_element_by_id('com.hnmall.haiwaigou:id/title_back_button')
             except NoSuchElementException,e:
-                try:self.browser.find_element_by_id('com.hnmall.haiwaigou:id/detail_cannel').click()
+                try:self.browser.find_element_by_id('com.hnmall.hadetail_canneliwaigou:id/detail_cannel').click()
                 except WebDriverException,e:
                     pass
             self.browser.find_element_by_id('com.hnmall.haiwaigou:id/shop_dedail_addcar').click()
@@ -91,7 +93,7 @@ class Shop(object):
                 return True
         if goodsbuy==True:
             self.buy_click(mb)
-            if not buy_login(self.browser):
+            if not self.buy_login():
                 return False
             if self.browser.find_element_by_id('com.hnmall.haiwaigou:id/title_name').text==u'提交订单':
                 return True
@@ -135,7 +137,7 @@ class Shop(object):
                 flag=1
                 break
         if flag==0:
-            swipeToUp(self.browser,'',1000)
+            self.swipeToUp('',1000)
             self.change_spec(spec)
 
 
@@ -145,8 +147,8 @@ class Shop(object):
         self.selected_show()
         if spec!='':  #更新为其他规格，一定是其他规格，否则会出错，若spec=='',表示不更新规格
             self.change_spec(spec)
-        element="browser.find_element_by_id('com.hnmall.haiwaigou:id/text_num_add')"
-        swipeToUp(self.browser,element,1000)
+        element="self.browser.find_element_by_id('com.hnmall.haiwaigou:id/text_num_add')"
+        self.swipeToUp(element,1000)
         number=self.browser.find_element_by_id('com.hnmall.haiwaigou:id/edittext_num').text
         number=int(number)
         num=int(num)  
@@ -162,8 +164,8 @@ class Shop(object):
         if not self.goods_page(name):
             return False
         self.selected_show()
-        element="browser.find_element_by_id('com.hnmall.haiwaigou:id/text_num_add')"
-        swipeToUp(self.browser,element,1000)
+        element="self.browser.find_element_by_id('com.hnmall.haiwaigou:id/text_num_add')"
+        self.swipeToUp(element,1000)
         num=int(num)
         diradd=''
         if typemn=='max':

@@ -1,11 +1,12 @@
 #coding:utf-8
 from selenium.common.exceptions import NoSuchElementException
 from wap_hwg import shop
-from base import buy_login,HWG_HRL,scroll,buy_login
+from base import BaseHWG
 
 
-class Cart(object):#基于登录后
+class Cart(BaseHWG):#基于登录后
     def __init__(self,browser):
+        super(Cart,self).__init__(browser)
         self.browser=browser
         self.cart_page()
 
@@ -17,7 +18,7 @@ class Cart(object):#基于登录后
         except NoSuchElementException,e:
             try:self.browser.find_element_by_link_text(u'购物车').click()
             except NoSuchElementException,e:
-                self.browser.get(HWG_HRL)
+                self.browser.get(BaseHWG.HWG_HRL)
                 self.cart_page()
 
     def cart_findgoods(self,sp):  #找到商品所在位置
@@ -126,9 +127,9 @@ class Cart(object):#基于登录后
         if submit_btn.get_attribute('class')=='btn_buy unable_buy':
             return False  #结算按钮是灰色的，直接退出
         else:
-            scroll(self.browser,submit_btn)
+            self.scroll(submit_btn)
             submit_btn.click()
-        login_result=buy_login(self.browser)
+        login_result=self.buy_login()
         if login_result==False:#判断是否进入登录界面
             return False
         elif login_result==2:

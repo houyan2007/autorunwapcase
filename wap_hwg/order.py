@@ -1,11 +1,11 @@
 #coding:utf-8
 from selenium.common.exceptions import NoSuchElementException
 from wap_hwg import shop,cart
+from base import BaseHWG
 
-class Order(object):
-    #order_one(S644000000223,3)
-    #order_more([S644000000223,3],[S644000000223,3])
+class Order(BaseHWG):
     def __init__(self,browser):
+        super(Order,self).__init__(browser)
         self.browser=browser
 
     def __dir__(self):

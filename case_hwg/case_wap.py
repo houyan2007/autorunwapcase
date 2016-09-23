@@ -3,7 +3,7 @@ from appium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 import unittest
 
-SRC_FLAG='ANDROID'
+SRC_FLAG='WAP'
 if SRC_FLAG=='WAP':
     from wap_hwg import membercenter,shop,cart,order
 elif SRC_FLAG=='ANDROID':
@@ -49,14 +49,14 @@ capabilities_mx_test ={'device':'android',
 class WapTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.browser = webdriver.Remote('http://localhost:4723/wd/hub', capabilities_mx_app)
+        cls.browser = webdriver.Remote('http://localhost:4723/wd/hub', capabilities_mx)
  
     @classmethod
     def tearDownClass(cls):
         cls.browser.quit()
     """
     def setUp(self):
-        self.browser=Browser('chrome')
+        self.browser=webdriver.Remote('http://localhost:4723/wd/hub', capabilities_mx_app)
 
     def tearDown(self):
         self.browser.quit()
@@ -78,16 +78,12 @@ class WapTestCase(unittest.TestCase):
                 case_cmd_str=case_cmd_str+"u'"+funcargs[i]+"'"+','
             case_cmd_str=case_cmd_str[:-1]+')'
         hwgobj=None
-        if funcname in dir(membercenter.Membercenter):
-            hwgobj=membercenter.Membercenter(self.browser)
-        elif funcname in dir(shop.Shop):
-            hwgobj=shop.Shop(self.browser)
-        elif funcname in dir(cart.Cart):
-            hwgobj=cart.Cart(self.browser)
-        elif funcname in dir(order.Order):
-            hwgobj=order.Order(self.browser)
-        else:
-            pass
+        classlist=[membercenter.Membercenter,shop.Shop,cart.Cart,order.Order]
+        for i in classlist:
+            if funcname in dir(i):
+                hwgobj=i(self.browser) 
+            else:
+                pass 
         print 'hwgobj.%s'% case_cmd_str
         return eval('hwgobj.%s'% case_cmd_str)
 

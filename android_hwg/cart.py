@@ -1,10 +1,11 @@
 #coding=utf-8
 from selenium.common.exceptions import NoSuchElementException
-from base import swipeToUp,home_back,buy_login
+from base import BaseHWG
 from android_hwg import shop
 
-class Cart(object):
+class Cart(BaseHWG):
     def __init__(self,browser):
+        super(Cart,self).__init__(browser)
         self.browser=browser
         self.cart_page()
 
@@ -13,8 +14,9 @@ class Cart(object):
 
     def cart_page(self):
         self.browser.implicitly_wait(30)
-        home_back(self.browser)
+        self.home_back(BaseHWG.PageFlag)
         self.browser.find_element_by_id('com.hnmall.haiwaigou:id/index_production').click()
+        BaseHWG.PageFlag='cart'
 
     def cart_delete(self,*names):
         names=list(names)
@@ -59,17 +61,17 @@ class Cart(object):
                     del_flag=del_flag+1
             if del_flag==0:
                 goods_old=self.browser.find_elements_by_id('com.hnmall.haiwaigou:id/tv_product_name')[-1].text
-                swipeToUp(self.browser,'',1000)
-                swipeToUp(self.browser,'',1000)
+                self.swipeToUp('',1000)
+                self.swipeToUp('',1000)
                 try:goods_new=self.browser.find_elements_by_id('com.hnmall.haiwaigou:id/tv_product_name')[-1].text
                 except NoSuchElementException,e:
-                    swipeToUp(self.browser,'',1000)
+                    self.swipeToUp('',1000)
                     goods_new=self.browser.find_elements_by_id('com.hnmall.haiwaigou:id/tv_product_name')[-1].text
                 if goods_old==goods_new:   #滑动到页面底部
                     break
 
     def cart_findgoods(self,name):
-        try:self.browser.find_element_by_id('com.hnmall.haiwaigou:id/fl_all').find_element_by_id('com.hnmall.haiwaigou:id/el_shop_car')
+        try:self.browser.find_element_by_id('com.hnmall.haiwaigou:id/el_shop_car')
         except NoSuchElementException,e:
             return False   #购物车列表为空
         while True:
@@ -83,13 +85,13 @@ class Cart(object):
                 else:
                     continue
             goods_old=self.browser.find_elements_by_id('com.hnmall.haiwaigou:id/tv_product_name')[-1].text
-            swipeToUp(self.browser,'',1000)
-            swipeToUp(self.browser,'',1000)
+            self.swipeToUp('',1000)
+            self.swipeToUp('',1000)
             self.browser.implicitly_wait(5)
             try:
                 goods_new=self.browser.find_elements_by_id('com.hnmall.haiwaigou:id/tv_product_name')[-1].text
             except NoSuchElementException,e:
-                swipeToUp(self.browser,'',1000)
+                self.swipeToUp('',1000)
                 goods_new=self.browser.find_elements_by_id('com.hnmall.haiwaigou:id/tv_product_name')[-1].text
             if goods_old==goods_new:   #滑动到页面底部
                 return False    
@@ -102,8 +104,10 @@ class Cart(object):
             if not goods_object.goods_buyadd(name,False,True,False):
                 return False   #商品添加到购物车失败，直接退出
             self.browser.find_element_by_id('com.hnmall.haiwaigou:id/bottom_layout').click()
+            BaseHWG.PageFlag='cart'
             return self.cart_findgoods(name)
         else:
+            BaseHWG.PageFlag='cart'
             return goods
 
 
@@ -141,6 +145,7 @@ class Cart(object):
         goods_qty=goods.find_element_by_id('com.hnmall.haiwaigou:id/edittext_num').text  
         goods_qty=int(goods_qty)
         if goods_qty==num:
+
             return True
         else:
             return False 
@@ -148,14 +153,10 @@ class Cart(object):
     def goods_pay(self,goods):
         while True:
             try:
-                pay_btn=self.browser.find_element_by_id('com.hnmall.haiwaigou:id/el_shop_car').\
-                find_element_by_class_name('android.widget.LinearLayout').\
-                find_element_by_class_name('android.widget.LinearLayout').\
-                find_element_by_id('com.hnmall.haiwaigou:id/ll_car_bottom').\
-                find_element_by_id('com.hnmall.haiwaigou:id/tv_pay')
+                pay_btn=self.browser.find_element_by_id('com.hnmall.haiwaigou:id/tv_pay')
             except NoSuchElementException,e:
-                element="browser.find_element_by_id('com.hnmall.haiwaigou:id/tv_pay')"
-                swipeToUp(self.browser,element,1000)
+                element="self.browser.find_element_by_id('com.hnmall.haiwaigou:id/tv_pay')"
+                self.swipeToUp(element,1000)
             else:
                 pay_pos=pay_btn.location_in_view
                 pay_y=pay_pos[u'y']
@@ -168,8 +169,8 @@ class Cart(object):
                 if pay_y>goods_y:   #结算按钮在商品名称下面
                     return pay_x,pay_y
                 else:
-                    element="browser.find_element_by_id('com.hnmall.haiwaigou:id/tv_pay')"
-                    swipeToUp(self.browser,'element',1000)
+                    element="self.browser.find_element_by_id('com.hnmall.haiwaigou:id/tv_pay')"
+                    self.swipeToUp(element,1000)
 
     def cart_submit(self,name):#点击包含某商品对应的结算按钮
         goods=self.cart_shop(name)
@@ -183,7 +184,7 @@ class Cart(object):
         except NoSuchElementException,e:
             pass
         else:
-            login_result=buy_login(self.browser)
+            login_result=self.buy_login()
             if login_result==False:#判断是否进入登录界面
                 return False
             else:
@@ -191,6 +192,7 @@ class Cart(object):
                 self.browser.tap([(pay_x,pay_y)],0)                
         self.browser.implicitly_wait(5)
         if self.browser.find_element_by_id('com.hnmall.haiwaigou:id/title_name').text==u'提交订单':
+            BaseHWG.PageFlag='cart2order'
             return True
         else:
             return False

@@ -1,10 +1,11 @@
 #coding:utf-8
 import os,time
 from selenium.common.exceptions import NoSuchElementException
-from base import CENTER_URL
+from base import BaseHWG
 
-class Membercenter(object):
+class Membercenter(BaseHWG):
     def __init__(self,browser):
+        super(Membercenter,self).__init__(browser)
         self.browser=browser
         self.center_page()
 
@@ -12,7 +13,7 @@ class Membercenter(object):
         return ['register','login','nopay','addr_delete']
 
     def center_page(self):
-        self.browser.get(CENTER_URL)
+        self.browser.get(BaseHWG.CENTER_URL)
 
     def isLogin(self):
         try: self.browser.find_element_by_class_name('userInfo')

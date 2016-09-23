@@ -1,9 +1,10 @@
 #coding=utf-8
 from selenium.common.exceptions import NoSuchElementException
-from base import home_back
+from base import BaseHWG
 
-class Membercenter(object):
+class Membercenter(BaseHWG):
     def __init__(self,browser):
+        super(Membercenter,self).__init__(browser)
         self.browser=browser
         self.center_page()
 
@@ -12,8 +13,9 @@ class Membercenter(object):
 
     def center_page(self):
         self.browser.implicitly_wait(5)
-        home_back(self.browser)
+        self.home_back(BaseHWG.PageFlag)
         self.browser.find_element_by_id('com.hnmall.haiwaigou:id/index_personal').click()
+        BaseHWG.PageFlag='membercenter'
 
     def islogin(self):
         try:self.browser.find_element_by_id('com.hnmall.haiwaigou:id/tv_login')
@@ -37,6 +39,7 @@ class Membercenter(object):
         self.browser.find_element_by_id('com.hnmall.haiwaigou:id/tv_login').click()
         try:self.browser.find_element_by_id('com.hnmall.haiwaigou:id/tv_username')
         except NoSuchElementException,e:
+            BaseHWG.PageFlag='login'   #在登录界面
             return False
         else:
             return True
@@ -57,19 +60,18 @@ class Membercenter(object):
             flag=flag+1
             if num!='' and flag==num:
                 break
+        self.browser.find_element_by_id('com.hnmall.haiwaigou:id/title_back').click()
         return True
 
     def nopay(self):
         self.browser.find_element_by_id('com.hnmall.haiwaigou:id/tv_pay').click()
         try:self.browser.find_element_by_id('com.hnmall.haiwaigou:id/tv_pay_money').click()
         except NoSuchElementException,e:
+            BaseHWG.PageFlag='nopay'
             return False   #待付款列表为空
         title=self.browser.find_element_by_id('com.hnmall.haiwaigou:id/title_name').text
         if title==u'支付方式':
+            BaseHWG.PageFlag='paytype_'+BaseHWG.PageFlag
             return True
         else:
             return False
-
-
-            
-
