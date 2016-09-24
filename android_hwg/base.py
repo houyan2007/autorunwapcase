@@ -22,6 +22,38 @@ class BaseHWG(object):
             else:
             	return True
 
+    def pos_tap(self,element,t):  #t:点击要素的持续时间
+        pos=element.location_in_view
+        pos_x=pos[u'x']
+        pos_y=pos[u'y']
+        self.browser.tap([(pos_x,pos_y)],t)
+
+    def is_pagebottom(self,element_str):
+        goods_old=exec(element_str)
+        self.swipeToUp('',1000)
+        try:goods_new=exec(element_str)
+        except NoSuchElementException,e:
+            self.swipeToUp('',1000)
+            goods_new=exec(element_str)
+        if goods_old==goods_new:   #滑动到页面底部
+            return True
+        else:
+            return False
+
+    def is_elemadownelemb(self,elema,elemb):
+        a_pos=elema.location_in_view
+        a_y=a_pos[u'y']
+        a_x=a_pos[u'x']
+        try:
+            b_pos=elemb.location_in_view
+            b_y=b_pos[u'y']
+        except NoSuchElementException,e:
+            return a_x,a_y
+        if a_y>b_y:
+            return a_x,a_y
+        else:
+            return False
+
     def buy_login(self):
         try:self.browser.find_element_by_id('com.hnmall.haiwaigou:id/et_username')
         except NoSuchElementException,e:

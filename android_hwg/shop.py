@@ -1,6 +1,7 @@
 #coding=utf-8
 from selenium.common.exceptions import NoSuchElementException,WebDriverException
 from base import BaseHWG
+from index import Index
 
 class Shop(BaseHWG):
     def __init__(self,browser):
@@ -10,30 +11,13 @@ class Shop(BaseHWG):
     def __dir__(self):
         return ['goods_max','goods_min','goods_change','goods_buyadd']
 
-    def goods_page(self,name):#android通过商品名称搜索定位
-        if name=='':
+    def goods_page(self,name):
+        home=Index(self.browser)
+        if not home.search(name):
             return False
-        self.browser.implicitly_wait(30)
-        self.home_back(BaseHWG.PageFlag)
-        self.browser.find_element_by_id('com.hnmall.haiwaigou:id/title_search').click()
-        self.browser.find_element_by_id('com.hnmall.haiwaigou:id/search_edittext').send_keys(name)
-        self.browser.find_element_by_id('com.hnmall.haiwaigou:id/search_cannel').click()
-        try:gridview=self.browser.find_element_by_id('com.hnmall.haiwaigou:id/default_textbutton')
-        except NoSuchElementException,e:
-            BaseHWG.PageFlag='searchresult'
-            return False   #没有搜索到对应的商品
         else:
-            self.browser.find_element_by_id('com.hnmall.haiwaigou:id/act_session_item_img').click()
-            try:title=self.browser.find_element_by_id('com.hnmall.haiwaigou:id/title_name').text
-            except NoSuchElementException,e:
-                return False  #未跳转到商品详情页
-            else:
-                if title==u'商品详情':
-                    BaseHWG.PageFlag='shop'
-                    return True
-                else:
-                    return False
-
+            BaseHWG.PageFlag='shop'
+            return True
 
     def selected_show(self):
         element="self.browser.find_element_by_id('com.hnmall.haiwaigou:id/tv_rule_name').click()"
