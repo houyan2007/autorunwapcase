@@ -1,55 +1,36 @@
 #coding:utf-8
+import sys
 from appium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 import unittest
+import mobile_flag
 
-SRC_FLAG='WAP'
-if SRC_FLAG=='WAP':
+SRC_FLAG=''
+MOBIL_FLAG=''
+cap_dict={}
+input_para=sys.argv
+if len(input_para)!=1 and len(input_para)!=3:
+    print '输入参数错误'
+if len(input_para)==3:
+    SRC_FLAG=input_para[1].lower()
+    MOBIL_FLAG=input_para[2].lower()
+    cap_dict=exec('mobile_flag.capabilities_'+MOBIL_FLAG+'_'+SRC_FLAG)
+if len(input_para)==1:
+    SRC_FLAG='wap'
+    cap_dict=capabilities_wap_mx
+
+if SRC_FLAG=='wap':
     from wap_hwg import membercenter,shop,cart,order
-elif SRC_FLAG=='ANDROID':
+elif SRC_FLAG=='android':
     from android_hwg import membercenter,shop,cart,order
 else:
-    pass
-#############################################################################################
-#wap
-capabilities_mx ={'device':'android',
-'platformName': 'Android',
-'platformVersion': '5.0.1',
-'deviceName': 'MEIZU MX4',
-'browserName':  'Chrome'  #'Safari’ for iOS and 'Chrome’, 'Chromium’, or 'Browser’ for Android
-}
-capabilities_sum ={'device':'android',
-'platformName': 'Android',
-'platformVersion': '4.1.1',
-'deviceName': 'Sumsung N7108',
-'browserName':  'Chrome'  #'Safari’ for iOS and 'Chrome’, 'Chromium’, or 'Browser’ for Android
-}
-############################################################################################
-#android
-capabilities_mx_app ={'device':'android',
-'platformName': 'Android',
-'platformVersion': '5.0.1',
-'deviceName': 'MEIZU MX4',
-'appPackage':'com.hnmall.haiwaigou',
-'appActivity':'.ui.activity.SlashActivity',
-'unicodeKeyboard':True,
-'resetKeyboard':True
-}
+    print '参数错误'
 
-capabilities_mx_test ={'device':'android',
-'platformName': 'Android',
-'platformVersion': '5.0.1',
-'deviceName': 'MEIZU MX4',
-'appPackage':'com.meizu.flyme.calculator',
-'appActivity':'.Calculator'
-}
-
-############################################################################################
 
 class WapTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.browser = webdriver.Remote('http://localhost:4723/wd/hub', capabilities_mx)
+        cls.browser = webdriver.Remote('http://localhost:4723/wd/hub', cap_dict)
  
     @classmethod
     def tearDownClass(cls):

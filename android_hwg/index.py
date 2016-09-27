@@ -31,4 +31,3 @@ class Index(BaseHWG):
                     return True
                 else:
                     return False
-

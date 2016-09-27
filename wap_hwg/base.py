@@ -7,6 +7,7 @@ class BaseHWG(object):
     SHOP_URL='http://wap.hwg.youayun.cn/shop/sp-'
     HWG_HRL='http://wap.hwg.youayun.cn/'
     CENTER_URL='http://wap.hwg.youayun.cn/shop/membercenter.html'
+    CATEGORY_URL='http://wap.hwg.youayun.cn/shop/category/findShowCategories.html'
 
     def __init__(self,browser):
         self.browser=browser
