@@ -14,7 +14,8 @@ if len(input_para)!=1 and len(input_para)!=3:
 if len(input_para)==3:
     SRC_FLAG=input_para[1].lower()
     MOBIL_FLAG=input_para[2].lower()
-    cap_dict=eval(mobile_flag.'capabilities_'+MOBIL_FLAG+'_'+SRC_FLAG)
+    cap_str='capabilities_'+MOBIL_FLAG+'_'+SRC_FLAG
+    cap_dict=eval(mobile_flag.cap_str)
 if len(input_para)==1:
     SRC_FLAG='wap'
     cap_dict=capabilities_wap_mx
